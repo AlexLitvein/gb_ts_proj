@@ -2,6 +2,7 @@ import { renderSearchFormBlock, findHandler } from './search-form.js'
 import { renderSearchStubBlock } from './search-results.js'
 import { renderUserBlock } from './user.js'
 import { renderToast } from './lib.js'
+import { fetchTodos, renderTodosBlock} from './place-holder.js'
 
 window.addEventListener('DOMContentLoaded', () => {
   renderUserBlock('Vasa', '/img/avatar.png', 0);
@@ -11,5 +12,8 @@ window.addEventListener('DOMContentLoaded', () => {
     { text: 'Это пример уведомления. Используйте его при необходимости', type: 'success' },
     { name: 'Понял', handler: () => { console.log('Уведомление закрыто') } }
   );
+
+  fetchTodos().then((json) => renderTodosBlock(json));
+  
   document.getElementById('find_bttn').addEventListener('click', findHandler );
 })

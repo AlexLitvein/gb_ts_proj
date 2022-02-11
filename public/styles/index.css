@@ -328,3 +328,14 @@ span.forward {
 .info-block p {
     margin-bottom: 16px;    
 }
+
+.todo-cont{
+    display: flex;
+    flex-direction: column;
+    justify-content:center;
+}
+
+.todo-item{
+    border: solid 1px grey;
+    margin: 2px;
+}
