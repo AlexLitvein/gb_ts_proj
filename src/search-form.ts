@@ -1,30 +1,61 @@
 import { renderBlock } from './lib.js'
+import {offsetDate, getMonthLastDate, frmtDate} from './date-util.js'
+interface Place{  
+}
 
-export function renderSearchFormBlock (dateIn:Date, dateOut:Date) {
- 
-  function frmtDate(date:Date, delimiter:string){
-    const month = date.getMonth() + 1; 
-    const day = date.getDate();    
-    const year  = date.getFullYear();
-    return year + delimiter + ('0' + month).slice(-2) + delimiter + ('0'+ day).slice(-2);
+interface findCb {
+  (res: string|Place[]): void
+}
+
+interface SearchFormData{
+  sity: string
+  dataIn: Date
+  dataOut: Date
+  price: number
+}
+
+const searchCb = (res: string|Place[])=>{
+  console.log(res);
+  
+}
+
+const search=(formData: SearchFormData, cb: findCb)=>{
+  setTimeout(()=>{
+    const res = !!Math.round(Math.random());
+    const out  = res ? [] : 'error';
+    cb(out);
+  }, 2);
+}
+
+export function findHandler() {
+  const formCtrls=document.forms[0];
+  const formData =  {
+    sity: formCtrls['city'].value,
+    dataIn: formCtrls['checkin'].value,
+    dataOut: formCtrls['checkout'].value,
+    price: formCtrls['price'].value,
   }
 
-  const minDateInStr = frmtDate(new Date(Date.now()), '-');  // before
-  dateIn.setDate(dateIn.getDate()+1);
-  
-  const maxDateOutStr = frmtDate(dateOut, '-'); // before
-  dateOut.setDate(dateOut.getDate()+2);
-  
+  search(formData, searchCb);
+}
+
+export function renderSearchFormBlock (dateIn?:Date, dateOut?:Date) {
+  let defaultDataIn = dateIn || new Date(Date.now()); 
+  defaultDataIn = offsetDate(defaultDataIn, 1);
+  const defaultDataOut = offsetDate(defaultDataIn, 2) ;
+  const maxDataOut =  getMonthLastDate( offsetDate(defaultDataIn, 0, 1)) ;
+  const minDateInStr = frmtDate(defaultDataIn, '-');
+  const maxDateOutStr = frmtDate(maxDataOut, '-');
   
   renderBlock(
     'search-form-block',
     `
-    <form>
+    <form >
       <fieldset class="search-filedset">
         <div class="row">
           <div>
             <label for="city">Город</label>
-            <input id="city" type="text" disabled value="Санкт-Петербург" />
+            <input id="city" type="text" name="city" disabled value="Санкт-Петербург" />
             <input type="hidden" disabled value="59.9386,30.3141" />
           </div>
           <!--<div class="providers">
@@ -35,18 +66,18 @@ export function renderSearchFormBlock (dateIn:Date, dateOut:Date) {
         <div class="row">
           <div>
             <label for="check-in-date">Дата заезда</label>
-            <input id="check-in-date" type="date" value="${frmtDate(dateIn, '-')}" min="${minDateInStr}" max="${maxDateOutStr}" name="checkout" name="checkin" />
+            <input id="check-in-date" type="date" value="${frmtDate(defaultDataIn, '-')}" min="${minDateInStr}" max="${maxDateOutStr}" name="checkin" />
           </div>
           <div>
             <label for="check-out-date">Дата выезда</label>
-            <input id="check-out-date" type="date" value="${frmtDate(dateOut, '-')}" min="${minDateInStr}" max="${maxDateOutStr}" name="checkout" />
+            <input id="check-out-date" type="date" value="${frmtDate(defaultDataOut, '-')}" min="${minDateInStr}" max="${maxDateOutStr}" name="checkout" />
           </div>
           <div>
             <label for="max-price">Макс. цена суток</label>
-            <input id="max-price" type="text" value="" name="price" class="max-price" />
+            <input id="max-price" type="text" value="99" name="price" class="max-price" />
           </div>
           <div>
-            <div><button>Найти</button></div>
+            <div><button type="button" id="find_bttn">Найти</button></div>
           </div>
         </div>
       </fieldset>
