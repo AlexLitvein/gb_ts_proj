@@ -5,15 +5,15 @@ interface Todo {
     completed: boolean
 }
 
-export interface TodoResponse {
-    todos: Todo[]
+interface GetTodosByCount {
+  (count: number): Promise<Todo[]>
 }
 
-interface renderTodosBlock {
-    (data: [Todo]): void
+interface RenderTodosBlock {
+    (todos: Todo[]): void
 }
 
-export const renderTodosBlock = (todos) => {
+export const renderTodosBlock:RenderTodosBlock = (todos) => {
   const element = document.getElementById('todos');
 
   element.innerHTML += '<h1>Todos</h1';
@@ -27,8 +27,7 @@ export const renderTodosBlock = (todos) => {
   });
 }
 
-export const fetchTodos = () => {
-  return fetch('https://jsonplaceholder.typicode.com/todos?_limit=10')
-    .then((response) => response.json())
-    .then<TodoResponse>(json => json); // Только для "посмотреть" типизированный then )
+export const getTodosByCount:GetTodosByCount = (count) => {
+  return fetch(`https://jsonplaceholder.typicode.com/todos?_limit=${count}`)
+    .then(response => response.json());
 }
