@@ -5,7 +5,7 @@
         "@typescript-eslint"
     ],
     "extends": [
-        "eslint:recommended",
+        "eslint:recommended", // no-unused-vars включен в этот набор опций
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended"
     ],
