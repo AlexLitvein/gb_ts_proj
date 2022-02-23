@@ -4,7 +4,7 @@ export function getMonthLastDate(date: Date) {
   return tmp;
 }
 
-export function offsetDate(date: Date, day, month=0, year=0) {
+export function offsetDate(date: Date, day:number, month=0, year=0) {
   const tmp = new Date(date.getTime());
   tmp.setDate(tmp.getDate() + day);
   tmp.setMonth(tmp.getMonth() + month);

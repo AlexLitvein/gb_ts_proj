@@ -3,8 +3,8 @@ import {offsetDate, getMonthLastDate, frmtDate} from './date-util.js'
 interface Place{  
 }
 
-interface findCb {
-  (res: string|Place[]): void
+interface SearchCallback {
+  (formData: SearchFormData): unknown
 }
 
 interface SearchFormData{
@@ -14,29 +14,34 @@ interface SearchFormData{
   price: number
 }
 
-const searchCb = (res: string|Place[])=>{
-  console.log(res);
-  
+const searchCb = (query: SearchFormData)=>{
+  const flag = !!Math.round(Math.random()); 
+  const res: Place[] = [];
+  return flag ? res : 'error'; 
 }
 
-const search=(formData: SearchFormData, cb: findCb)=>{
-  setTimeout(()=>{
-    const res = !!Math.round(Math.random());
-    const out  = res ? [] : 'error';
-    cb(out);
+const search=(formData: SearchFormData, cb: SearchCallback)=>{
+  setTimeout(()=>{       
+    const res = cb(formData);
+    if(Array.isArray(res)){  
+      res.forEach(el=>console.log(el));      
+    } else {
+      console.log(res);
+    }    
   }, 2);
 }
 
-export function findHandler() {
+export function onSybmit() {
   const formCtrls=document.forms[0];
-  const formData =  {
-    sity: formCtrls['city'].value,
-    dataIn: formCtrls['checkin'].value,
-    dataOut: formCtrls['checkout'].value,
-    price: formCtrls['price'].value,
-  }
-
-  search(formData, searchCb);
+  if(formCtrls){
+    const formData =  {
+      sity: formCtrls['city'].value,
+      dataIn: formCtrls['checkin'].value,
+      dataOut: formCtrls['checkout'].value,
+      price: formCtrls['price'].value,
+    }  
+    search(formData, searchCb);
+  }  
 }
 
 export function renderSearchFormBlock (dateIn?:Date, dateOut?:Date) {
@@ -45,7 +50,7 @@ export function renderSearchFormBlock (dateIn?:Date, dateOut?:Date) {
   const defaultDataOut = offsetDate(defaultDataIn, 2) ;
   const maxDataOut =  getMonthLastDate( offsetDate(defaultDataIn, 0, 1)) ;
   const minDateInStr = frmtDate(defaultDataIn, '-');
-  const maxDateOutStr = frmtDate(maxDataOut, '-');
+  const maxDateOutStr = frmtDate(dateOut || maxDataOut, '-');
   
   renderBlock(
     'search-form-block',
@@ -77,7 +82,7 @@ export function renderSearchFormBlock (dateIn?:Date, dateOut?:Date) {
             <input id="max-price" type="text" value="99" name="price" class="max-price" />
           </div>
           <div>
-            <div><button type="button" id="find_bttn">Найти</button></div>
+            <div><button type="sybmit" id="find_bttn">Найти</button></div>
           </div>
         </div>
       </fieldset>
